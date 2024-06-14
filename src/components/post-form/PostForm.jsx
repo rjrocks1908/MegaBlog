@@ -17,7 +17,7 @@ function PostForm({ post }) {
         });
 
     const navigate = useNavigate();
-    const userData = useSelector((state) => state.user);
+    const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
         if (post) {
@@ -37,6 +37,7 @@ function PostForm({ post }) {
         } else {
             const file = await service.uploadFile(data.image[0]);
             if (file) {
+                console.log("UserData", userData);
                 const fileId = file.$id;
                 data.featuredImage = fileId;
                 const dbPost = await service.createPost({
@@ -55,8 +56,8 @@ function PostForm({ post }) {
             return value
                 .trim()
                 .toLowerCase()
-                .replace(/^[a-zA-Z\d\s]+/g, "-")
-                .replace(/\s/g, "-");
+                .replace(/[^\w\s-]/g, "")
+                .replace(/\s+/g, "-");
         }
 
         return "";
